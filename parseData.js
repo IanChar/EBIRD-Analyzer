@@ -90,7 +90,13 @@ var selectAttr = function(key){
 // Return:
 //	-Returns function that can be used to select key
 var selectNum = function(key){
-	return function(elem){return parseInt(elem[key]);};
+	return function(elem){
+		var ret = parseInt(elem[key]);
+		if(isNaN(ret)){
+			ret = 0;
+		}
+		return ret;
+	};
 }
 
 //Gets num most common attribute selected by key_func
@@ -130,6 +136,19 @@ var getMax = function(key_func){
 	return jsonData[max_index];
 }
 
+var getMin = function(key_func){
+	var min_index = 0;
+	var min_value = Infinity;
+	var ocurrences = _.map(jsonData, key_func);
+	for(var i = 0; i < ocurrences.length; i++){
+		if(min_value > ocurrences[i]){
+			min_value = ocurrences[i];
+			min_index = i;
+		}
+	}
+	return jsonData[min_index];
+}
+
 //Counts how much of the data has unique attribute
 // Params:
 //	-key_func: function that selects specific attribute
@@ -147,6 +166,81 @@ var countUnique = function(key_func){
 	return count;
 }
 
+//Gives the average of a particular number
+// Params:
+//	-key_func: function that selects specific number
+// Returns: average of that number
+var getAvg = function(key_func){
+	var elems = _.map(jsonData, key_func);
+	var sum = 0;
+	for(var i = 0; i < elems.length; i++){
+		sum += elems[i];
+	}
+	return sum/elems.length;
+}
+
+var getPercent = function(key_func, as_percent){
+	var stats = _.countBy(jsonData, key_func);
+	var data = [];
+	for(var key in stats){
+		if(stats.hasOwnProperty(key)){
+			data.push([key, stats[key]]);
+		}
+	}
+	if(as_percent){
+		var total = jsonData.length;
+		for(var i = 0; i < data.length; i++){
+			data[i][1] = data[i][1]/total;
+		}
+		return data;
+	}	
+	return data;
+}
+
+var mostInLocation = function(){
+	var groupings = _.groupBy(jsonData, function(elem){
+		return elem.common_name;
+	});
+	for(var key in groupings){
+		var seen  = {};
+		count = 0;
+		var curr_arr = groupings[key];
+		for(var i = 0; i < curr_arr.length; i++){
+			if(!seen.hasOwnProperty(curr_arr[i])){
+				count++;
+				seen[curr_arr[i]] = true;
+			}
+		}
+		groupings[key] = count;
+	}
+	var maxKey = 0;
+	var maxValue = 0;
+	for(var key in groupings){
+		if(groupings[key] > maxValue){
+			maxValue = groupings[key];
+			maxKey = key;
+		}
+	}
+	return maxKey;
+}
+
+
+var greatestMissing = function(num){
+	var countMissing = function(data_entry){
+		var count =  _.countBy(data_entry, function(elem){
+			if(elem === '' || elem === 'x')
+				return "Blank"
+			else
+				return "Filled"
+		});
+		return [data_entry, count['Blank']];
+	}
+	results = _.map(jsonData, countMissing);
+	results = _.sortBy(results, function(elem){
+		return elem[1];
+	});
+	return results.slice(0,num); 
+}
 
 var main = function(){
 	//question 1
@@ -198,16 +292,38 @@ var main = function(){
 
 	//Question 10
 	//Which bird was observed in the most number of states/countries?
-	//REQUIRES NEW CODE
+	console.log("\nQuestion 10:");
+	console.log(mostInLocation());
 
 	//Question 11
 	//What is the average duration of an observation?
 
+
 	//Question 12
 	//How many bird species have American in their common name?
+	console.log("\nQuestion 12:")
+	var findAmerican = function(elem) {
+		if(elem.common_name.indexOf("American") > -1){
+			return "Contains American";
+		}
+		else{
+			return "Does Not Contain";
+		}
+	}
+	console.log(getPercent(findAmerican, false));
 
 	//Question 13
 	//What percentage of time do the observers identify a bird’s sex?
+	console.log("\nQuestion 13:")
+	var hasSex = function(elem){
+		if(elem.common_name.indexOf("Male") > -1 || elem.common_name.indexOf("Female") > -1){
+			return "Has Sex";
+		}
+		else{
+			return "Does not have sex";
+		}
+	}
+	console.log(getPercent(hasSex, true));
 
 	//Question 14
 	//How many different countries?
@@ -221,6 +337,9 @@ var main = function(){
 
 	//Question 16
 	//Which column has the most number of missing data?
+	console.log("\nQuestion 16:");
+	console.log(greatestMissing(1));
+
 
 	//Question 17
 	//Which locality type is the most frequent?
@@ -240,7 +359,12 @@ var main = function(){
 
 	//Question 20
 	//When was the earliest date and the most recent date?
-
+	console.log("\nQuestion 20:");
+	var selectDate = function(key){
+		return function(elem){return new Date(elem[key]);};
+	}
+	console.log("Earliest Date:", getMax(selectDate('observation_date')));
+	console.log("Oldest Date:", getMin(selectDate('observation_date')));
 }
 
 main();
