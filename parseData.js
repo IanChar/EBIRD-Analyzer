@@ -92,9 +92,9 @@ var selectAttr = function(key){
 var selectNum = function(key){
 	return function(elem){
 		var ret = parseInt(elem[key]);
-		if(isNaN(ret)){
-			ret = 0;
-		}
+		// if(isNaN(ret)){
+		// 	ret = 0;
+		// }
 		return ret;
 	};
 }
@@ -243,128 +243,163 @@ var greatestMissing = function(num){
 }
 
 var main = function(){
-	//question 1
+	//First 20 Questions
+	// //question 1
 	// How many total observations?
-	console.log("Question 1:")
+	console.log("\nSample Questions");
+	console.log("\nQuestion 1: How many total observations are there in this dataset?");
 	console.log(jsonData.length);
 
 	//qeustion 2
 	// What are the three most common birds?
-	console.log("\nQuestion 2:")
-	console.log(getMostCommon(selectAttr('common_name'), 3));
+	console.log("\nQuestion 2: What were the three most common birds found?")
+	var birds = getMostCommon(selectAttr('common_name'), 3);
+	console.log(birds[0][0] + ": " + birds[0][1] + ", " + birds[1][0] + ": " + birds[1][1] + ", " + birds[2][0] + ": " + birds[2][1]);
 
 	//question 3
 	// What state had the most observations?
-	console.log("\nQuestion 3:")
+	console.log("\nQuestion 3: What state had the most observations of birds?")
 	console.log(getMostCommon(selectAttr('state'), 1))
+	console.log("\n\n")
 
-	//Question 4
-	// What is the most number of count made by a person in a single observation?
-	console.log("\nQuestion 4:")
-	console.log(getMax(selectNum('observation_count')));
+	// //Question 4
+	// // What is the most number of count made by a person in a single observation?
+	// console.log("\nQuestion 4:")
+	// console.log(getMax(selectNum('observation_count')));
 
-	//Question 5
-	//How many unique taxonomy ids?
-	console.log("\nQuestion 5:")
-	console.log(countUnique(selectAttr('taxonomic_order')));
+	// //Question 5
+	// //How many unique taxonomy ids?
+	// console.log("\nQuestion 5:")
+	// console.log(countUnique(selectAttr('taxonomic_order')));
 
-	//Question 6
-	//What is the longest common name?
-	console.log("\nQuestion 6:")
-	var comLen = function(elem) { return elem.common_name.length;}
-	console.log(getMax(comLen));
+	// //Question 6
+	// //What is the longest common name?
+	// console.log("\nQuestion 6:")
+	// var comLen = function(elem) { return elem.common_name.length;}
+	// console.log(getMax(comLen));
 
-	//Question 7
-	//Who observed the most birds? List their first and last name.
-	console.log("\nQuestion 7:");
-	console.log(getMostCommon(selectAttr('full_name')));
+	// //Question 7
+	// //Who observed the most birds? List their first and last name.
+	// console.log("\nQuestion 7:");
+	// console.log(getMostCommon(selectAttr('full_name')));
 
-	//Question 8
-	//How many kinds of hybrid species are there?
-	console.log("\nQuestion 8:");
-	console.log(countUnique(selectAttr('hybrid')));
+	// //Question 8
+	// //How many kinds of hybrid species are there?
+	// console.log("\nQuestion 8:");
+	// console.log(countUnique(selectAttr('hybrid')));
 
-	//Question 9
-	//What time of year has the most observations?
-	console.log("\nQuestion 9:");
-	var getMonth = function(elem) {return elem.observation_date.split('-')[1]; }
-	console.log(getMostCommon(getMonth))
+	// //Question 9
+	// //What time of year has the most observations?
+	// console.log("\nQuestion 9:");
+	// var getMonth = function(elem) {return elem.observation_date.split('-')[1]; }
+	// console.log(getMostCommon(getMonth))
 
-	//Question 10
-	//Which bird was observed in the most number of states/countries?
-	console.log("\nQuestion 10:");
-	console.log(mostInLocation());
+	// //Question 10
+	// //Which bird was observed in the most number of states/countries?
+	// console.log("\nQuestion 10:");
+	// console.log(mostInLocation());
 
-	//Question 11
-	//What is the average duration of an observation?
-
-
-	//Question 12
-	//How many bird species have American in their common name?
-	console.log("\nQuestion 12:")
-	var findAmerican = function(elem) {
-		if(elem.common_name.indexOf("American") > -1){
-			return "Contains American";
-		}
-		else{
-			return "Does Not Contain";
-		}
-	}
-	console.log(getPercent(findAmerican, false));
-
-	//Question 13
-	//What percentage of time do the observers identify a bird’s sex?
-	console.log("\nQuestion 13:")
-	var hasSex = function(elem){
-		if(elem.common_name.indexOf("Male") > -1 || elem.common_name.indexOf("Female") > -1){
-			return "Has Sex";
-		}
-		else{
-			return "Does not have sex";
-		}
-	}
-	console.log(getPercent(hasSex, true));
-
-	//Question 14
-	//How many different countries?
-	console.log("\nQuestion 14:");
-	console.log(countUnique(selectAttr('country')));
-
-	//Question 15
-	//Which country has the most number of observers?
-	console.log("\nQuestion 15:");
-	console.log(getMostCommon(selectAttr('country')));
-
-	//Question 16
-	//Which column has the most number of missing data?
-	console.log("\nQuestion 16:");
-	console.log(greatestMissing(1));
+	// //Question 11
+	// //What is the average duration of an observation?
 
 
-	//Question 17
-	//Which locality type is the most frequent?
-	console.log("\nQuestion 17:");
-	console.log(getMostCommon(selectAttr('locality_type')));
+	// //Question 12
+	// //How many bird species have American in their common name?
+	// console.log("\nQuestion 12:")
+	// var findAmerican = function(elem) {
+	// 	if(elem.common_name.indexOf("American") > -1){
+	// 		return "Contains American";
+	// 	}
+	// 	else{
+	// 		return "Does Not Contain";
+	// 	}
+	// }
+	// console.log(getPercent(findAmerican, false));
 
-	//Question 18
-	//What is the longest trip comment?
-	console.log("\nQuestion 18:");
-	var commentLength = function(elem) {return elem.trip_comments.length;}
-	console.log(getMax(commentLength));
+	// //Question 13
+	// //What percentage of time do the observers identify a bird’s sex?
+	// console.log("\nQuestion 13:")
+	// var hasSex = function(elem){
+	// 	if(elem.common_name.indexOf("Male") > -1 || elem.common_name.indexOf("Female") > -1){
+	// 		return "Has Sex";
+	// 	}
+	// 	else{
+	// 		return "Does not have sex";
+	// 	}
+	// }
+	// console.log(getPercent(hasSex, true));
 
-	//Question 19
-	//What is the highest latitude an observation was taken?
-	console.log("\nQuestion 19:");
-	console.log(getMax(selectNum('latitude')));
+	// //Question 14
+	// //How many different countries?
+	// console.log("\nQuestion 14:");
+	// console.log(countUnique(selectAttr('country')));
 
-	//Question 20
-	//When was the earliest date and the most recent date?
-	console.log("\nQuestion 20:");
-	var selectDate = function(key){
-		return function(elem){return new Date(elem[key]);};
-	}
-	console.log("Earliest Date:", getMax(selectDate('observation_date')));
-	console.log("Oldest Date:", getMin(selectDate('observation_date')));
+	// //Question 15
+	// //Which country has the most number of observers?
+	// console.log("\nQuestion 15:");
+	// console.log(getMostCommon(selectAttr('country')));
+
+	// //Question 16
+	// //Which column has the most number of missing data?
+	// console.log("\nQuestion 16:");
+	// console.log(greatestMissing(1));
+
+
+	// //Question 17
+	// //Which locality type is the most frequent?
+	// console.log("\nQuestion 17:");
+	// console.log(getMostCommon(selectAttr('locality_type')));
+
+	// //Question 18
+	// //What is the longest trip comment?
+	// console.log("\nQuestion 18:");
+	// var commentLength = function(elem) {return elem.trip_comments.length;}
+	// console.log(getMax(commentLength));
+
+	// //Question 19
+	// //What is the highest latitude an observation was taken?
+	// console.log("\nQuestion 19:");
+	// console.log(getMax(selectNum('latitude')));
+
+	// //Question 20
+	// //When was the earliest date and the most recent date?
+	// console.log("\nQuestion 20:");
+	// var selectDate = function(key){
+	// 	return function(elem){return new Date(elem[key]);};
+	// }
+	// console.log("Earliest Date:", getMax(selectDate('observation_date')));
+	// console.log("Oldest Date:", getMin(selectDate('observation_date')));
+
+	//Next Set of Questions
+
+	// //What is the difference in count between the most and least common birds?
+	// console.log("\nQuestion 21");
+	// var common_birds = getMostCommon(selectAttr('common_name'));
+	// console.log(common_birds[0][1] - common_birds[common_birds.length-1][1]);
+	// //What is the difference between the US state with the most and least observations?
+	// console.log("\nQuestion 22");
+	// var states = getMostCommon(selectAttr('state'));
+	// console.log(states[0][1] - states[states.length-1][1]);
+	// //What is the difference between the most and least number of count made by a person in a single observation?
+	// console.log("\nQuestion 22");
+	// console.log(getMax(selectNum('observation_count'))['observation_count']
+	//  - getMin(selectNum('observation_count'))['observation_count']);
+	// //What is the difference in character length between the shortest and longest names?
+	// console.log("\nQuestion 23");
+	// var commonLength = function(elem){return elem.common_name.length};
+	// console.log(getMax(commonLength)['common_name'].length
+	//  - getMin(commonLength)['common_name'].length);
+	// //How msany months between the time of year has the most observations and that with the least?
+
+	//What is the difference in observation count for the bird in the most number of states/countries and that in the least?
+	//What is the difference between the longest and shortest duration of an observation?
+	//How many bird species have American in their common name as opposed to those with European in their name?
+	//Whats the difference between in number of observers for country with the most as opposed to that with the least?
+	//How close is the difference between the 5 columns missing the most data as opposed to the 5 missing the least?
+	//What is the range of observations between the most frequent and least frequent locality types?
+	//What is the difference between the longest and shortest trip comment?
+	//What is difference between the highest and lowest latitude?
+	//How long was there between the first and last observation?
 }
 
 main();
