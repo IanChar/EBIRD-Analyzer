@@ -1,7 +1,9 @@
 var fs = require('fs'),
-	_ = require('lodash')
-	bt = require('./birdTools.js')
-	parseData = require('./parseData.js')	
+	_ = require('lodash'),
+	bt = require('./birdTools.js'),
+	parseData = require('./parseData.js'),
+	sys = require("sys"),
+	stdin = process.openStdin();	
 
 var data = parseData.processText();
 var jsonData = parseData.toJSON(data);
@@ -142,11 +144,15 @@ var problemSet2 = function(){
 	//What is the difference in count between the most and least common birds?
 	console.log("\nQuestion 21");
 	var common_birds = bt.getMostCommon(bt.selectAttr('common_name'), Infinity, jsonData);
+	console.log(common_birds[0]);
+	console.log(common_birds[common_birds.length - 1]);
 	console.log(common_birds[0][1] - common_birds[common_birds.length-1][1]);
 
 	//What is the difference between the US state with the most and least observations?
 	console.log("\nQuestion 22");
 	var states = bt.getMostCommon(bt.selectAttr('state'), Infinity, jsonData);
+	console.log(states[0]);
+	console.log(states[states.length - 1])
 	console.log(states[0][1] - states[states.length-1][1]);
 
 	//What is the difference between the most and least number of count made by a person in a single observation?
@@ -191,18 +197,176 @@ var problemSet2 = function(){
 		}
 	}
 	console.log("European birds:", bt.getPercent(findEuropean, false, jsonData)[1][1]);
+	
 	//Whats the difference between in number of observers for country with the most as opposed to that with the least?
 	console.log("\nQuestion 28");
+	var common_countries = bt.getMostCommon(bt.selectAttr('country'), Infinity, jsonData);
+	console.log(common_countries[0]);
+	console.log(common_countries[common_countries.length - 1]);
+	console.log(common_countries[0][1] - common_countries[common_countries.length-1][1]);	
 
 	//How close is the difference between the 5 columns missing the most data as opposed to the 5 missing the least?
+
 	//What is the range of observations between the most frequent and least frequent locality types?
+	console.log("\nQuestion 30");
+	var loctypes = bt.getMostCommon(bt.selectAttr('locality_type'), Infinity, jsonData);
+	console.log(loctypes[0]);
+	console.log(loctypes[loctypes.length - 1]);
+	console.log(loctypes[0][1] - loctypes[loctypes.length-1][1]);
+
 	//What is the difference between the longest and shortest trip comment?
+	console.log("\nQuestion 31");
+	var commentLength = function(elem) {return elem.trip_comments.length;}
+	var comMax = bt.getMax(commentLength, jsonData);
+	var comMin = bt.getMin(commentLength, jsonData);
+	console.log(comMax);
+	console.log(comMin);
+	console.log(commentLength(comMax) - commentLength(comMin));
+
 	//What is difference between the highest and lowest latitude?
+	console.log("\nQuestion 32")
+	console.log(bt.getMax(bt.selectNum('latitude'), jsonData));
 	//How long was there between the first and last observation?
 }
 
 var main = function(){
-	problemSet1();
+	var displayOptions = function(){
+		console.log("Select a question type:");
+		console.log("[1]\t What is the most common...?");
+		console.log("[2]\t What is the maximum (number)...?");
+		console.log("[3]\t How many unique...?");
+		console.log("[4]\t Question Set 1");
+		console.log("[5]\t Question Set 2");
+		console.log("[6}\t Attribute Options");
+		console.log("[7]\t Quit");
+		console.log("----------------------------------");
+	}
+	displayOptions();
+	prevSelect = 0;
+	stdin.addListener("data", function(d) {
+	    d = d.toString();
+	    d = d.substring(0, d.length - 1);
+    	if(prevSelect === 3){
+	    	console.log("\nHow many unique " + d + "s are there?");
+	    	var ans = bt.countUnique(bt.selectAttr(d), jsonData);
+	    	if(ans.length === 0){
+	    		console.log("Could not find attribute");
+	    	}
+	    	else{
+	    		console.log(ans);
+	    	}
+	    	prevSelect = 0;
+	    	console.log("");
+	    	displayOptions();
+	    }
+    	else if(prevSelect === 2){
+	    	console.log("\nWhat is the maximum " + d + "?");
+	    	var ans = bt.getMax(bt.selectNum(d), jsonData);
+	    	if(ans.length === 0){
+	    		console.log("Could not find attribute");
+	    	}
+	    	else{
+	    		console.log(ans);
+	    	}
+	    	prevSelect = 0;
+	    	console.log("");
+	    	displayOptions();
+	    }
+	    else if(prevSelect === 1){
+	    	d = d.split(" ");
+	    	attr = d[0];
+	    	num = parseFloat(d[1]);
+	    	console.log("\nWhat are the " + num + " most common " + attr + "?");
+	    	var ans = bt.getMostCommon(bt.selectAttr(attr), num, jsonData);
+	    	if(ans.length === 0){
+	    		console.log("Could not find attribute");
+	    	}
+	    	else{
+	    		console.log(ans);
+	    	}
+	    	prevSelect = 0;
+	    	console.log("");
+	    	displayOptions();
+	    }
+	    else{
+	    	d = parseFloat(d);
+    	    if(d === 1){
+    	    	prevSelect = 1;
+    	    	console.log("\nSelect an attribute and amount (<attribute> <amount>)");
+    	    }
+    	    else if(d === 2){
+    	    	prevSelect = 2;
+    	    	console.log("\nSelect an attribute (must be a number)")
+    	    }
+    	    else if(d === 3){
+    	    	prevSelect = 3;
+    	    	console.log("\nSelect an attribute")
+    	    }
+    	    else if(d === 4){
+    	    	problemSet1();
+    	    	console.log(" ")
+    		    displayOptions();
+    	    }
+    	    else if(d === 5){
+    	    	problemSet2();
+    	    	console.log(" ")
+    		    displayOptions();
+    	    }
+    	    else if(d === 6){
+    	    	console.log(" ")
+    	    	console.log("global_unique_identifier");
+				console.log("taxonomic_order");				
+				console.log("category");				
+				console.log("common_name");				
+				console.log("scientific_name");				
+				console.log("subspecies_common");				
+				console.log("subspecies_scientific");				
+				console.log("observation_count");				
+				console.log("breeding_bird_atlas_code");				
+				console.log("age_sex");				
+				console.log("country");
+				console.log("country_code");
+				console.log("state");
+				console.log("state_code");
+				console.log("county");
+				console.log("county_code");
+				console.log("iba_code");
+				console.log("bcr_code");
+				console.log("locality");
+				console.log("locality_id");
+				console.log("locality_type");
+				console.log("latitude");
+				console.log("longitude");
+				console.log("observation_date");
+				console.log("time_observations_started");
+				console.log("trip_comments");
+				console.log("species_comment");
+				console.log("observer_id");
+				console.log("first_name");
+				console.log("last_nmae");
+				console.log("sampling_event_identifier");
+				console.log("protocol_type");
+				console.log("project_code");
+				console.log("duration_minutes");
+				console.log("effort_distance_km");
+				console.log("effor_area_ha");
+				console.log("number_observers");
+				console.log("all_species_reported");
+				console.log("group_identifier");
+				console.log("approved");
+				console.log("reviewed");
+				console.log("reviewed");
+				console.log("full_name\n");
+				displayOptions();
+    	    }
+    	    else if(d === 7){
+    	    	process.exit(0);
+    	    }
+    	    else{
+    	    	console.log("Invalid input");
+    	    }
+	    }
+  	});
 }
 
 main();
