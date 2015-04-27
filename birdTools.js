@@ -27,6 +27,17 @@ birdTools.selectNum = function(key){
 	};
 }
 
+birdTools.selectPhrase = function(phrase){
+	return function(elem) {
+		if(elem.common_name.indexOf(phrase) > -1){
+			return "Contains " + phrase;
+		}
+		else{
+			return "Does Not Contain";
+		}
+	}
+}
+
 //Gets num most common attribute selected by key_func
 // Params: 
 //	-key_func: function that selects specific attribute
@@ -101,10 +112,14 @@ birdTools.countUnique = function(key_func, jsonData){
 birdTools.getAvg = function(key_func, jsonData){
 	var elems = _.map(jsonData, key_func);
 	var sum = 0;
+	var counter = 0;
 	for(var i = 0; i < elems.length; i++){
-		sum += elems[i];
+		if(!isNaN(elems[i])){
+			sum += elems[i];
+			counter++;
+		}
 	}
-	return sum/elems.length;
+	return sum/counter;
 }
 
 birdTools.getPercent = function(key_func, as_percent, jsonData){

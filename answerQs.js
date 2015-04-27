@@ -232,21 +232,55 @@ var problemSet2 = function(){
 var main = function(){
 	var displayOptions = function(){
 		console.log("Select a question type:");
-		console.log("[1]\t What is the most common...?");
-		console.log("[2]\t What is the maximum (number)...?");
-		console.log("[3]\t How many unique...?");
-		console.log("[4]\t Question Set 1");
-		console.log("[5]\t Question Set 2");
-		console.log("[6}\t Attribute Options");
-		console.log("[7]\t Quit");
-		console.log("----------------------------------");
+		console.log("[1]\t Quit");
+		console.log("[2]\t Attribute Options");
+		console.log("[3]\t Question Set 1");
+		console.log("[4]\t Question Set 2");
+		console.log("[5]\t What is the most common...?");
+		console.log("[6]\t What is the maximum (number)...?");
+		console.log("[7]\t How many unique...?");
+		console.log("[8]\t What's the average of...?");
+		console.log("[9]\t What's the minimum (number)...?");
+		console.log("[10]\t How many have <phrase> in...?");
+		console.log("[11]\t How many have <greater/less> than...?");
+		console.log("---------------------------------------------");
 	}
 	displayOptions();
 	prevSelect = 0;
 	stdin.addListener("data", function(d) {
 	    d = d.toString();
 	    d = d.substring(0, d.length - 1);
-    	if(prevSelect === 3){
+	    if(prevSelect === 10){
+	    	d = d.split(" ");
+	    	var attr = d[0];
+	    	var phrase = d[1];
+			console.log(bt.getPercent(bt.selectPhrase(phrase), false, jsonData));
+			prevSelect = 0;
+			console.log("");
+			displayOptions();
+	    }
+    	else if(prevSelect === 9){
+	    	console.log("\nWhat is the minimum " + d + "?");
+	    	var ans = bt.getMin(bt.selectNum(d), jsonData);
+	    	if(ans.length === 0){
+	    		console.log("Could not find attribute");
+	    	}
+	    	else{
+	    		console.log(ans);
+	    	}
+	    	prevSelect = 0;
+	    	console.log("");
+	    	displayOptions();
+	    }
+    	else if(prevSelect === 8){
+	    	console.log("\nWhat's the average of " + d + "?");
+	    	var ans = bt.getAvg(bt.selectNum(d), jsonData);
+    		console.log(ans);
+	    	prevSelect = 0;
+	    	console.log("");
+	    	displayOptions();
+	    }
+    	else if(prevSelect === 7){
 	    	console.log("\nHow many unique " + d + "s are there?");
 	    	var ans = bt.countUnique(bt.selectAttr(d), jsonData);
 	    	if(ans.length === 0){
@@ -259,7 +293,7 @@ var main = function(){
 	    	console.log("");
 	    	displayOptions();
 	    }
-    	else if(prevSelect === 2){
+    	else if(prevSelect === 6){
 	    	console.log("\nWhat is the maximum " + d + "?");
 	    	var ans = bt.getMax(bt.selectNum(d), jsonData);
 	    	if(ans.length === 0){
@@ -272,7 +306,7 @@ var main = function(){
 	    	console.log("");
 	    	displayOptions();
 	    }
-	    else if(prevSelect === 1){
+	    else if(prevSelect === 5){
 	    	d = d.split(" ");
 	    	attr = d[0];
 	    	num = parseFloat(d[1]);
@@ -290,29 +324,44 @@ var main = function(){
 	    }
 	    else{
 	    	d = parseFloat(d);
-    	    if(d === 1){
-    	    	prevSelect = 1;
-    	    	console.log("\nSelect an attribute and amount (<attribute> <amount>)");
+    	    if (d === 11){
+    	    	console.log("Not yet implemented");	
     	    }
-    	    else if(d === 2){
-    	    	prevSelect = 2;
-    	    	console.log("\nSelect an attribute (must be a number)")
+    	    else if (d === 10){
+    	    	console.log("Select attribute and phrase (<attr> <phrase>)");	
+    	    	prevSelect = 10;
+    	    }	
+    	    else if (d === 9){
+    	    	prevSelect = 9;
+    	    	console.log("\nSelect an attribute (must be a number)");	
     	    }
-    	    else if(d === 3){
-    	    	prevSelect = 3;
-    	    	console.log("\nSelect an attribute")
+    	    else if (d === 8){
+				console.log("\nSelect an attribute (must be a number)");
+				prevSelect = 8;
     	    }
-    	    else if(d === 4){
-    	    	problemSet1();
-    	    	console.log(" ")
-    		    displayOptions();
+    	    else if(d === 7){
+    	    	prevSelect = 7;
+    	    	console.log("\nSelect an attribute");
+    	    }
+    	    else if(d === 6){
+    	    	prevSelect = 6;
+    	    	console.log("\nSelect an attribute (must be a number)");
     	    }
     	    else if(d === 5){
+    	    	prevSelect = 5;
+    	    	console.log("\nSelect an attribute and amount (<attribute> <amount>)");
+    	    }
+    	    else if(d === 4){
     	    	problemSet2();
     	    	console.log(" ")
     		    displayOptions();
     	    }
-    	    else if(d === 6){
+    	    else if(d === 3){
+    	    	problemSet1();
+    	    	console.log(" ")
+    		    displayOptions();
+    	    }
+    	    else if(d === 2){
     	    	console.log(" ")
     	    	console.log("global_unique_identifier");
 				console.log("taxonomic_order");				
@@ -359,7 +408,7 @@ var main = function(){
 				console.log("full_name\n");
 				displayOptions();
     	    }
-    	    else if(d === 7){
+    	    else if(d === 1){
     	    	process.exit(0);
     	    }
     	    else{
